@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using myWebPageClient.Models;
+using System;
+
 
 namespace myWebPageClient.Controllers
 {
@@ -26,6 +28,7 @@ namespace myWebPageClient.Controllers
         // GET: ProductController/Details/5
         public ActionResult Details(int id)
         {
+
             return View();
         }
 
@@ -38,17 +41,53 @@ namespace myWebPageClient.Controllers
         // POST: ProductController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Product product, IFormFile Image)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (Image != null && Image.Length > 0)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        await Image.CopyToAsync(ms);
+                        product.ImageData = Convert.ToBase64String(ms.ToArray()); // Artık string türüyle uyumlu
+                        product.ImageType = Image.ContentType; // MIME türünü ekle
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("Image", "Lütfen bir resim yükleyin.");
+                    return View(product);
+                }
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://localhost:7038/api/");
+                    var response = await client.PostAsJsonAsync("Products", product);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction(nameof(Index)); // Başarılı ise listeye dön
+                    }
+                    else
+                    {
+                        var errorMessage = await response.Content.ReadAsStringAsync();
+                        ModelState.AddModelError(string.Empty, $"API Hatası: {response.StatusCode} - {errorMessage}");
+                    }
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ModelState.AddModelError(string.Empty, $"Beklenmedik bir hata oluştu: {ex.Message}");
             }
+
+            return View(product); // Hata durumunda formu tekrar göster
         }
+
+
+
+
+
 
         // GET: ProductController/Edit/5
         public ActionResult Edit(int id)

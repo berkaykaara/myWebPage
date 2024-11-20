@@ -225,3 +225,4 @@ C:\Users\msi-nb\Desktop\myWebPage\myWebPageClient\bin\Debug\net8.0\runtimes\win\
 C:\Users\msi-nb\Desktop\myWebPage\myWebPageClient\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
 C:\Users\msi-nb\Desktop\myWebPage\myWebPageClient\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\msi-nb\Desktop\myWebPage\myWebPageClient\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
+C:\Users\msi-nb\Desktop\myWebPage\myWebPageClient\obj\Debug\net8.0\myWebPageClient.sourcelink.json
